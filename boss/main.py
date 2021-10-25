@@ -4,6 +4,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from dataclasses import dataclass
 
+from producer import publish
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:root@db/main'
@@ -37,6 +39,14 @@ class Order(db.Model):
 @app.route('/api/shop')
 def index():
   return jsonify(Shop.query.all())  
+
+@app.route('/api/order/<int:id>/deliver_finish', methods=['POST'])
+def deliver_finish(id):
+  publish('order_deliverfinished', id)
+
+  return jsonify({
+    'message':'success'
+  })
 
 if __name__ == '__main__':
   app.run(debug=True, host='0.0.0.0')
