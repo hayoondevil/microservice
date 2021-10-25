@@ -10,13 +10,13 @@ class ShopViewSet(viewsets.ViewSet):
   def list(self, requeset):   #/api/shop
     shops = Shop.objects.all()
     serializer = ShopSerializer(shops, many=True)
-    publish()
     return Response(serializer.data)
 
   def create(self, requeset):   #/api/shop
     serializer = ShopSerializer(data=requeset.data)
     serializer.is_valid(raise_exception=True)
     serializer.save()
+    publish('shop_create', serializer.data)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
   def retrieve(self, requeset, pk=None):   #/api/shop/<str:idx>
@@ -29,11 +29,13 @@ class ShopViewSet(viewsets.ViewSet):
     serializer = ShopSerializer(instance = shop, data=requeset.data)
     serializer.is_valid(raise_exception=True)
     serializer.save()
+    publish('shop_update', serializer.data)
     return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
 
   def destroy(self, requeset, pk=None):   #/api/shop/<str:idx>
     shop = Shop.objects.get(id=pk)
     shop.delete()
+    publish('shop_delete', pk)
     return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -47,6 +49,7 @@ class OrderViewSet(viewsets.ViewSet):
     serializer = OrderSerializer(data=requeset.data)
     serializer.is_valid(raise_exception=True)
     serializer.save()
+    publish('order_create', serializer.data)    
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
   def retrieve(self, requeset, pk=None):   #/api/order/<str:idx>
@@ -59,9 +62,11 @@ class OrderViewSet(viewsets.ViewSet):
     serializer = OrderSerializer(instance = order, data=requeset.data)
     serializer.is_valid(raise_exception=True)
     serializer.save()
+    publish('order_update', serializer.data)
     return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
 
   def destroy(self, requeset, pk=None):   #/api/order/<str:idx>
     order = Order.objects.get(id=pk)
     order.delete()
+    publish('order_delete', pk)    
     return Response(status=status.HTTP_204_NO_CONTENT)

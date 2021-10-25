@@ -15,7 +15,7 @@ def callback(ch, method, properties, body):
 
 channel.basic_consume(queue='order', on_message_callback=callback, auto_ack=True)
 
-print('Started consuming')
+print('Started order consuming')
 
 channel.start_consuming()
 
